@@ -77,6 +77,17 @@
                     <div class="col-12">
                         <h6 id="time-when-value" style="text-align: center;">0</h6>
                     </div>
+                    <div class="col-12">
+                        <h5 style="text-align: center;">From</h5>
+                    </div>
+                    <div class="col-12">
+                        <h6 id="from" style="text-align: center;">???</h6>
+                        <!--
+                            From user selector when simulating
+                        -->
+                        <select id="from-select" class="form-control">
+                        </select>
+                    </div>
                 </div>
                 <div class="col-6">
                     <!--
@@ -485,6 +496,9 @@
 
         var skipTitle = $("#skip-title")
 
+        var from = $("#from")
+        var fromSelect = $("#from-select")
+
 
         datePicker.hide()
         simulationBar.hide()
@@ -492,6 +506,7 @@
         timeBar.hide()
         timeControls.hide()
         tokenBar.hide()
+        fromSelect.hide()
 
         simulationButton.click(async function(){
             simulationBar.hide()
@@ -499,6 +514,8 @@
             controlBar.show()
             syncControls.hide()
             tokenBar.hide()
+            from.hide()
+            fromSelect.show()
             simulating = true
             $("#amount").val(50)
             // Trims out the future messages as the future is now changing.
@@ -513,7 +530,11 @@
         })
 
         backButton.click(function(){
-            currentTime = lastMessage().timestamp
+            if(lastMessage()){
+                if(lastMessage().timestamp){
+                    currentTime = lastMessage().timestamp
+                }
+            }
             if(simulating) {
                 room.messages = room.messages.filter(function(message){
                     return message.timestamp <= currentTime
@@ -529,7 +550,9 @@
             if(nextMessage()==null){
                 currentTime = nextTime-1000
             }else{
+                if(nextMessage().timestamp){
                 currentTime = nextMessage().timestamp-1000
+                }
             }
         })
 
@@ -554,6 +577,15 @@
             a.href = url
             a.download = "1.json"
             a.click()
+        })
+
+        fromSelect.change(function(){
+            var from = $(this).val()
+            if(nextGen){
+                if(nextGen.id){
+                    nextGen.id = from
+                }
+            }
         })
 
         syncYearButton.click(function(){
@@ -661,6 +693,10 @@
                     $("#cal-next").text(`???`)
                 }
             }
+            var fromValue = fromSelect.val()
+            if(fromValue == nextGen.id) from.text(getUserByID(nextGen.id).name)
+            else from.text(getUserByID(fromValue).name)
+            fromSelect.val(nextGen.id)
         }
 
         chatForm.submit(function(e){
@@ -746,6 +782,12 @@
                 // Updates the simulation states if simulating
                 if(simulating) {
                     await UpdateSimulation()
+                }else{
+                    if(nextMessage()){
+                        if(nextMessage().authorID){
+                            from.text(getUserByID(nextMessage().authorID).name)
+                        }
+                    }
                 }
                 // If the step has changed, update the display.
                 if(step()!=lastStep){
@@ -789,11 +831,13 @@
             var users = usrs.map(u=>getUserByID(u))
             // renders the user list
             $("#users").empty()
+            fromSelect.empty()
             // filters nulls and users without names
             users = users.filter(u=>u!=null && u.name!="")
             users.forEach(function(user){
                 if(user != null){
                     $("#users").append(`<li class="ms-3 me-3"><span style="color:${user.nameColor};">${user.name}</span></li>`);
+                    fromSelect.append(`<option value="${user.id}">${user.name}</option>`)
                 }
             })
             if(users.length > 1) $("#usersH").text(`${users.length} Were There`);
@@ -805,10 +849,18 @@
             if(!generating){
                 if(nextGen != null){
                     if(currentTime >= nextGen.nextMessageTimestamp-3){
-                        var user = getUserByID(nextGen.id)
-                        var Context = `${context()}\n${user.name}:`
-                        console.log(Context,user);
-                        await generate(Context,user,currentTime+3)
+                        var fromValue = fromSelect.val()
+                        if(fromValue != nextGen.id){
+                            var user = getUserByID(fromValue)
+                            var Context = `${context()}\n${user.name}:`
+                            console.log(Context,user);
+                            await generate(Context,user,currentTime+3)
+                        }else{
+                            var user = getUserByID(nextGen.id)
+                            var Context = `${context()}\n${user.name}:`
+                            console.log(Context,user);
+                            await generate(Context,user,currentTime+3)
+                        }
                     }
                 }
             }
