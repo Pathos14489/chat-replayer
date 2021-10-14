@@ -1,0 +1,1455 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>Page Title</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <link rel='stylesheet' type='text/css' media='screen' href='main.css'>
+    <script src='main.js'></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-uWxY/CJNBR+1zjPWmfnSnVxwRheevXITnMqoEIeG1LJrdI0GlVs/9cVSyPYXdcSF" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-kQtW33rZJAHjgefvhyyzcGF3C5TFyBQBA13V1RKPf4uH+bwyzQxZ6CmMZHmNBEfJ" crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body style="background-color: black;">
+    <div class="row p-1 ms-auto me-auto" style="background-color: black;">
+        <!--
+            File upload for the user to upload a room.json file.
+        -->
+        <div class="col-12">
+            <form id="uploadForm" class="row m-2">
+                <div class="form-group col-8" style="color: white;">
+                    <label for="file">Select a room file to load... </label>
+                    <input type="file" class="form-control-file" id="file" name="file">
+                </div>
+                <button type="submit" class="col-4 btn btn-primary">Load</button>
+            </form>
+        </div>
+        <!-- 
+            Form to get the history for a given, date and time, room id and amount of messages to be displayed
+        -->
+        <div class="col-12 row mt-4 ms-auto me-auto">
+            <form id="datePicker" class="row">
+                <div class="form-group col-4">
+                    <input type="date" class="form-control" id="date" name="date" placeholder="01/01/2011">
+                </div>
+                <div class="form-group col-4">
+                    <input type="time" class="form-control" id="time" name="time" placeholder="00:00:00">
+                </div>
+                <div class="form-group col-2">
+                    <input type="number" class="form-control" id="amount" name="amount" placeholder="50" value="50">
+                </div>
+                <button type="submit" class="btn btn-primary col-2">Recollect</button>
+            </form>
+        </div>
+        <div class="col-12 mt-4 row ms-auto me-auto" id="chatbox-container">
+            <ul id="chatbox" class="col-10">
+
+            </ul>
+            <div class="col-2">
+                <h3 id="usersH" style="color:white"></h3>
+                <ul id="users" style="color:white;background-color: rgb(0, 0, 0);">
+    
+                </ul>
+            </div>
+        </div>
+        <div class="row col-12 mt-4 ms-auto me-auto" style="color:white">
+            <div class="col-4 row" id="time-bar">
+                <!--
+                    Time display for the chat -- How long until the next message
+                -->
+                <div id="time-display" class="row col-6" style="overflow: auto;">
+                    <div class="col-12">
+                        <h4 id="time-when" style="text-align: center;">Current Time</h4>
+                    </div>
+                    <div class="col-12">
+                        <h5 id="cal" style="text-align: center;"></h5>
+                    </div>
+                    <div class="col-12">
+                        <h6 id="current-time-value" style="text-align: center;">0</h6>
+                    </div>
+                    <div class="col-12">
+                        <h4 id="time-when" style="text-align: center;">Next Message</h4>
+                    </div>
+                    <div class="col-12">
+                        <h5 id="cal-next" style="text-align: center;"></h5>
+                    </div>
+                    <div class="col-12">
+                        <h6 id="time-when-value" style="text-align: center;">0</h6>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <!--
+                        Button to toggle the time controls and simulation bar
+                    -->
+                    <button id="toggle-controls" class="btn btn-primary">Hide</button>
+                    <div id="time-controls">
+                        <!--
+                            Time controls - Forward and Backward buttons
+                        -->
+                        <div class="row mt-2">
+                            <div class="col-12">
+                                <h5 id="skip-title" style="text-align: center;">Skip Controls</h3>
+                            </div>
+                            <div class="col-6">
+                                <button type="button" class="btn btn-primary" id="back-button">Back</button>
+                            </div>
+                            <div class="col-6">
+                                <button type="button" class="btn btn-primary" id="forward-button" style="float: right;">Forward</button>
+                            </div>
+                        </div>
+                        <!--
+                            Time interval input(up/down integer selector) for the chat -- How many seconds pass per second
+                        -->
+                        <div class="row mt-2" style="overflow: auto;">
+                            <div class="col-12">
+                                <h5 style="text-align: center;">Time Interval</h3>
+                            </div>
+                            <div class="col-6 ms-auto me-auto">
+                                <form id="timeIntervalForm">
+                                    <input type="number" class="form-control" id="timeInterval" name="timeInterval" placeholder="1" min="1"step="1" value="1">
+                                </form>
+                            </div>
+                        </div>
+                        <!--
+                            Button to save the current room state to
+                        -->
+                        <div id="export-controls" class="row mt-2">
+                            <div class="col-12">
+                                <h5 style="text-align: center;">Export</h3>
+                            </div>
+                            <div class="col-6">
+                                <button type="button" class="btn btn-primary" id="save-button">Save</button>
+                            </div>
+                        </div>
+                        <!--
+                            The sync controls to toggle syncing individual parts of time with real time
+                        -->
+                        <div id="sync-controls">
+                            <div class="row mt-2">
+                                <div class="col-12">
+                                    <h5 style="text-align: center;">Sync Controls</h3>
+                                </div>
+                            </div>
+                            <div class="container">
+                                <div class="btn-group mt-2 ms-auto me-auto" role="group" aria-label="Sync Controls">
+                                    <button type="button" class="btn btn-primary" id="sync-years">Sync Years</button>
+                                    <button type="button" class="btn btn-primary" id="sync-months">Sync Months</button>
+                                    <button type="button" class="btn btn-primary" id="sync-days">Sync Days</button>
+                                </div>
+                                <div class="btn-group mt-2 ms-auto me-auto" role="group" aria-label="Sync Controls">
+                                    <button type="button" class="btn btn-primary" id="sync-hours">Sync Hours</button>
+                                    <button type="button" class="btn btn-primary" id="sync-minutes">Sync Minutes</button>
+                                    <button type="button" class="btn btn-primary" id="sync-seconds">Sync Seconds</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="container col-8 mt-4 ms-auto ms-auto" id="simulation-bar">
+                <!--
+                    Simulation Button
+                -->
+                <div class="row col-12" style="overflow: auto;">
+                    <button type="button" class="btn btn-primary" id="simulation-button">Start Simulation</button>
+                </div>
+            </div>
+            <div class="container col-8 mt-4 ms-auto ms-auto" id="token-bar">
+                <form id="tokenToken" class="row m-2">
+                    <div class="form-group col-10" style="color: white;">
+                        <input type="text" class="form-control" id="token" name="token" placeholder="NovelAI Bearer Token...">
+                    </div>
+                    <button type="submit" class="col-2 btn btn-primary">Assign Token</button>
+                </form>
+            </div>
+            <div class="container col-8 mt-4 ms-auto ms-auto" id="control-bar">
+                <!--
+                    Chat input form for selecting name, color and message content, then a send button
+                -->
+                <div class="row col-12" style="overflow: auto;">
+                    <div class="col-12">
+                        <form id="chat-form" class="row">
+                            <div class="form-group col-1">
+                                <input type="color" class="form-control form-control-color" id="nameColor" name="nameColor" value="#ffffff" title="Choose your color">
+                            </div>
+                            <div class="form-group col-2">
+                                <input type="text" class="form-control" id="name" name="name" placeholder="Name">
+                            </div>
+                            <div class="form-group col-1">
+                                <input type="color" class="form-control form-control-color" id="bodyColor" name="bodyColor" value="#ffffff" title="Choose your color">
+                            </div>
+                            <div class="form-group col-6">
+                                <input type="text" class="form-control" id="message" name="message" placeholder="Message">
+                            </div>
+                            <button type="submit" class="btn btn-primary col-2">Send</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <style>
+        #chatbox {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            height: 60vh;
+            display: flex;
+            flex-direction: column;
+            max-width: 90%;
+            overflow: auto;
+        }
+        .msg {
+            padding: 10px;
+            border-bottom: 1px solid #ccc;
+            color: white;
+        }
+        .msg:first-child {
+            margin-top: auto;
+        }
+        #users{
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+    <script>
+        var startingTime = 0;
+        var room = null;
+        var currentTime = 0
+        var simulationUpdatedAt = 0
+        var simulationTimings = null
+        var nextTime = 0
+        var nextGen = null
+        var timeInterval = 1
+        var paused = true
+        var simulating = false
+        var generating = false
+        var amountToRender = $("#amount").val()
+        var tokenizer = null
+        var naiBearer = null
+        var sync = {
+            years: false,
+            months: false,
+            days: false,
+            hours: false,
+            minutes: false,
+            seconds: false
+        }
+
+        function validMessages(){
+            if(room != null){
+                var valid = room.messages.filter(function(message){
+                    return message.timestamp <= currentTime
+                })
+                return valid
+            }else{
+                return null
+            }
+        }
+        function validCanonMessages(){
+            if(room != null){
+                var valid = room.canon.messages.filter(function(message){
+                    return message.timestamp <= currentTime
+                })
+                return valid
+            }else{
+                return null
+            }
+        }
+        function step(){
+            if(validMessages() != null){
+                return validMessages().length
+            }else{
+                return 0
+            }
+        }
+        var lastStep = step()
+        
+        function context (){
+            var valid = validMessages()
+            if(valid.length > amountToRender) {
+                valid = valid.slice(valid.length - amountToRender)
+            }
+            var context = valid.map(function(message){
+                var name = message.nameOveride
+                if(name == ""){
+                    if(getUserByID(message.authorID) == null) name = "???"
+                    else name = getUserByID(message.authorID).name
+                }
+                return `${Time(message.timestamp).string}|${name}${message.type == "MSG"?": ":""}${message.body}`
+            })
+            return context.join("\n")
+        }
+
+        function lastMessage() {
+            if(room != null) {
+                if(room.messages[step()-2] != null) return room.messages[step()-2]
+                else return null
+            }else {
+                return null
+            }
+        }
+        function currentMessage() {
+            if(room != null) {
+                if(room.messages[step()-1] != null) return room.messages[step()-1]
+                else return null
+            }else {
+                return null
+            }
+        }
+        function nextMessage() {
+            if(room != null) {
+                if(room.messages[step()] != null) return room.messages[step()]
+                else return null
+            }else {
+                return null
+            }
+        }
+        function nextNextMessage() {
+            if(room != null) {
+                if(room.messages[step()] != null) return room.messages[step()]
+                else return null
+            }else {
+                return null
+            }
+        }
+        function averageResponseTime(){
+            if(room != null){
+                var valid = validMessages()
+                if(valid.length > amountToRender) {
+                    valid = valid.slice(valid.length - amountToRender)
+                }
+                var first = valid[0]
+                var times = valid.map(function(message){
+                    return message.timestamp
+                })
+                // Calculate the average
+                var average = 0
+                for(var i = 1; i < times.length; i++){
+                    average += Math.abs(times[i] - times[i-1])
+                }
+                return average / times.length
+            }else{
+                return 0
+            }
+        }
+        // Gets all the messages around a given time and returns them in an array
+        function around(time, distance){
+            if(room != null){
+                var messages = room.canon.messages
+                var valid = messages.filter(function(message){
+                    return message.timestamp <= time + distance && message.timestamp >= time - distance
+                })
+                return valid
+            }else{
+                return null
+            }
+        }
+        function getMessageByID(id){
+            if(room != null) {
+                var messages = room.messages
+                return messages.find(function(message){
+                    return message.id == id
+                })
+            }else{
+                return null
+            }
+        }
+        function getFullMessagesByUser(user){
+            if(room != null) {
+                if(user.messages) var messages = user.messages
+                else return null
+                messages = messages.map(function(message){
+                    return getMessageByID(message.id)
+                })
+                return messages
+            }else{
+                return null
+            }
+        }
+        // Gets all the user messages around a given time and returns them in an array
+        function aroundUser(user,time,distance){
+            if(!user) return null
+            if(room != null){
+                var messages = user.messages
+                if(messages == null) return null
+                var valid = messages.filter(function(message){
+                    if(message == null) return false
+                    return message.timestamp <= time + distance && message.timestamp >= time - distance
+                })
+                return valid
+            }else{
+                return null
+            }
+        }
+        function getCurrentUsers(){
+            var arnd = around(currentTime, 15*(60 * 1000))
+            var usrs = arnd.map(m=>m.authorID)
+            // makes the user list unique
+            usrs = usrs.filter((v,i,a)=>a.indexOf(v)==i)
+            // gets the users from the list
+            var users = usrs.map(u=>getUserByID(u))
+            return users
+        }
+        // For a list of users, get their average response time at a given timestamp and return it in an object of {"id":average}
+        function getAverageResponseTimes(users,time){
+            var averages = {}
+            var array = []
+            for(var i = 0; i < users.length; i++){
+                var user = users[i]
+                if(!user) continue
+                var arnd = aroundUser(user, time, 15*(60 * 1000))
+                var average = Math.ceil(Math.random()*(5*60))*1000
+                for(var j = 1; j < arnd.length; j++){
+                    average += Math.abs(arnd[j].timestamp - arnd[j-1].timestamp)
+                }
+                averages[user.id] = average
+                if(average > 0) array.push({
+                    id: user.id,
+                    nextMessageTimestamp: average + currentTime
+                })
+                array.filter(function(a){
+                    return a.nextMessageTimestamp <= currentTime
+                })
+                if(i == users.length - 1){
+                    return {
+                        averages,
+                        nextResponses: array
+                    }
+                }
+            }
+        }
+        // Finds a user by the id property under room.users
+        function getUserByID(id) {
+            if(room != null) {
+                for(var i = 0; i < room.users.length; i++) {
+                    if(room.users[i]) {
+                        if(room.users[i].id == id) {
+                            return room.users[i]
+                        }
+                    }
+                }
+                return null
+            }
+        }
+
+        const delay = time => new Promise(res=>setTimeout(res,time));
+        function Time(time) {
+            var date = new Date(time)
+            var hours = date.getHours()
+            var minutes = date.getMinutes()
+            var seconds = date.getSeconds()
+            var ampm = hours >= 12 ? 'pm' : 'am'
+            hours = hours % 12
+            var strings = {
+                hours: `${hours}`,
+                minutes: `${minutes}`,
+                seconds: `${seconds}`,
+            }
+            if(strings.hours == "0") strings.hours = "12"
+            return {
+                hours: hours,
+                minutes: minutes,
+                seconds: seconds,
+                ampm: ampm,
+                string: `${strings.hours.padStart(2,"0")}:${strings.minutes.padStart(2,"0")}:${strings.seconds.padStart(2,"0")} ${ampm.toUpperCase()}`
+            }
+        }
+        
+        var datePicker = $("#datePicker")
+        var chatForm = $("#chat-form")
+        var timeControls = $("#time-controls")
+        var syncControls = $("#sync-controls")
+        var exportControls = $("#export-controls")
+
+        var simulationBar = $("#simulation-bar")
+        var controlBar = $("#control-bar")
+        var timeBar = $("#time-bar")
+        var tokenBar = $("#token-bar")
+        
+        var timeDisplay = $("#time-display")
+
+        var simulationButton = $("#simulation-button")
+        var backButton = $("#back-button")
+        var forwardButton = $("#forward-button")
+        var toggleButton = $("#toggle-controls") //Button to toggle the time controls and simulation bar
+        var syncYearButton = $("#sync-years")
+        var syncMonthButton = $("#sync-months")
+        var syncDayButton = $("#sync-days")
+        var syncHourButton = $("#sync-hours")
+        var syncMinuteButton = $("#sync-minutes")
+        var syncSecondButton = $("#sync-seconds")
+        var saveButton = $("#save-button")
+
+        var skipTitle = $("#skip-title")
+
+
+        datePicker.hide()
+        simulationBar.hide()
+        controlBar.hide()
+        timeBar.hide()
+        timeControls.hide()
+        tokenBar.hide()
+
+        simulationButton.click(async function(){
+            simulationBar.hide()
+            datePicker.hide()
+            controlBar.show()
+            syncControls.hide()
+            tokenBar.hide()
+            simulating = true
+            $("#amount").val(50)
+            // Trims out the future messages as the future is now changing.
+            simulationUpdatedAt = currentTime
+            await UpdateSimulation()
+            room.messages = room.messages.filter(function(message){
+                return message.timestamp <= currentTime
+            })
+            skipTitle.text("Controls")
+            backButton.text("Undo")
+            forwardButton.text("Generate...")
+        })
+
+        backButton.click(function(){
+            currentTime = lastMessage().timestamp
+            if(simulating) {
+                room.messages = room.messages.filter(function(message){
+                    return message.timestamp <= currentTime
+                })
+                nextGen = null
+                simulationTimings = null
+                nextTime = null
+                UpdateSimulation()
+            }
+        })
+
+        forwardButton.click(function(){
+            if(nextMessage()==null){
+                currentTime = nextTime-1000
+            }else{
+                currentTime = nextMessage().timestamp-1000
+            }
+        })
+
+        toggleButton.click(function(){
+            if(timeControls.is(":visible")){
+                timeControls.hide()
+                if(naiBearer != null) simulationBar.hide()
+                else tokenBar.hide()
+                toggleButton.text("Show Advanced Controls")
+            }else{
+                timeControls.show()
+                if(naiBearer != null) simulationBar.show()
+                else tokenBar.show()
+                toggleButton.text("Hide")
+            }
+        })
+
+        saveButton.click(function(){
+            var blob = new Blob([JSON.stringify(room)], {type: "application/json"})
+            var url = URL.createObjectURL(blob)
+            var a = document.createElement("a")
+            a.href = url
+            a.download = "1.json"
+            a.click()
+        })
+
+        syncYearButton.click(function(){
+            if(sync.year){
+                sync.year = false
+                syncYearButton.text("Sync Years")
+            }else{
+                sync.year = true
+                syncYearButton.text("Unsync Years")
+            }
+            var DATE = new Date(currentTime)
+            var newString = `${DATE.getFullYear()}-${`${DATE.getMonth()+1}`.padStart(2,"0")}-${`${DATE.getDate()}`.padStart(2,"0")}`
+            $("#date").val(newString)
+        })
+        syncMonthButton.click(function(){
+            if(sync.month){
+                sync.month
+                syncMonthButton.text("Sync Months")
+            }else{
+                sync.month = true
+                syncMonthButton.text("Unsync Months")
+            }
+            var DATE = new Date(currentTime)
+            var newString = `${DATE.getFullYear()}-${`${DATE.getMonth()+1}`.padStart(2,"0")}-${`${DATE.getDate()}`.padStart(2,"0")}`
+            $("#date").val(newString)
+        })
+        syncDayButton.click(function(){
+            if(sync.day){
+                sync.day = false
+                syncDayButton.text("Sync Days")
+            }else{
+                sync.day = true
+                syncDayButton.text("Unsync Days")
+            }
+            var DATE = new Date(currentTime)
+            var newString = `${DATE.getFullYear()}-${`${DATE.getMonth()+1}`.padStart(2,"0")}-${`${DATE.getDate()}`.padStart(2,"0")}`
+            $("#date").val(newString)
+        })
+        syncHourButton.click(function(){
+            if(sync.hour){
+                sync.hour = false
+                syncHourButton.text("Sync Hours")
+            }else{
+                sync.hour = true
+                syncHourButton.text("Unsync Hours")
+            }
+            var DATE = new Date(currentTime)
+            var newString = `${DATE.getFullYear()}-${`${DATE.getMonth()+1}`.padStart(2,"0")}-${`${DATE.getDate()}`.padStart(2,"0")}`
+            $("#date").val(newString)
+        })
+        syncMinuteButton.click(function(){
+            if(sync.minute){
+                sync.minute = false
+                syncMinuteButton.text("Sync Minutes")
+            }else{
+                sync.minute = true
+                syncMinuteButton.text("Unsync Minutes")
+            }
+            var DATE = new Date(currentTime)
+            var newString = `${DATE.getFullYear()}-${`${DATE.getMonth()+1}`.padStart(2,"0")}-${`${DATE.getDate()}`.padStart(2,"0")}`
+            $("#date").val(newString)
+        })
+        syncSecondButton.click(function(){
+            if(sync.second){
+                sync.second = false
+                syncSecondButton.text("Sync Seconds")
+            }else{
+                sync.second = true
+                syncSecondButton.text("Unsync Seconds")
+            }
+            var DATE = new Date(currentTime)
+            var newString = `${DATE.getFullYear()}-${`${DATE.getMonth()+1}`.padStart(2,"0")}-${`${DATE.getDate()}`.padStart(2,"0")}`
+            $("#date").val(newString)
+        })
+
+        function displayTimes(){
+            $("#current-time-value").text(`${Time(currentTime).string}`);
+            if(nextMessage() != null){
+                $("#time-when-value").text(`${Time(nextMessage().timestamp).string}`);
+                nextTime = nextMessage().timestamp
+                nextGen = {
+                    id: nextMessage().authorID,
+                    nextMessageTimestamp: nextMessage().timestamp,
+                }
+            }else{
+                if(nextTime != null){
+                    $("#time-when-value").text(`${Time(nextTime).string}`);
+                }else{
+                    $("#time-when-value").text("???");
+                }
+            }
+            var DATE = new Date(currentTime)
+            var newString = `${DATE.getFullYear()}/${`${DATE.getMonth()+1}`.padStart(2,"0")}/${`${DATE.getDate()}`.padStart(2,"0")}`
+            $("#cal").text(newString)
+            if(nextMessage() != null){
+                var DATE2 = new Date(nextMessage().timestamp)
+                var newString2 = `${DATE2.getFullYear()}/${`${DATE2.getMonth()+1}`.padStart(2,"0")}/${`${DATE2.getDate()}`.padStart(2,"0")}`
+                $("#cal-next").text(newString2)
+            }else{
+                if(typeof nextTime == "number"){
+                    var DATE2 = new Date(nextTime)
+                    var newString2 = `${DATE2.getFullYear()}/${`${DATE2.getMonth()+1}`.padStart(2,"0")}/${`${DATE2.getDate()}`.padStart(2,"0")}`
+                    $("#cal-next").text(newString2)
+                }else{
+                    $("#cal-next").text(`???`)
+                }
+            }
+        }
+
+        chatForm.submit(function(e){
+            e.preventDefault()
+            var name = $("#name").val()
+            var nameColor = $("#nameColor").val()
+            var bodyColor = $("#bodyColor").val()
+            var message = $("#message").val()
+            if(name != "" && nameColor != "" && message != "") {
+                room.messages.push({
+                    nameOveride: name,
+                    authorID: 000,
+                    nameColor,
+                    bodyColor,
+                    body: message,
+                    timestamp: currentTime,
+                    type: "MSG"
+                })
+                $("#message").val("")
+                Update()
+            }
+        })
+        // Assigns naiBearer
+        tokenBar.submit(async function(e){
+            e.preventDefault()
+            naiBearer = $("#token").val()
+            if(naiBearer.length == 0){
+                naiBearer = null
+            }else{
+                simulationBar.show()
+                tokenBar.hide()
+                console.log(`Bearer ${naiBearer}`);
+            }
+        })
+
+        //The main update loop
+        setInterval(async function(){
+            amountToRender = $("#amount").val()
+            if(!paused && room != null){
+                // Sets the time interval to a full second instead of a milisecond
+                timeInterval = $("#timeInterval").val() * 1000
+
+                // Sets the syncs if they're applied
+                var anySync = false
+                for (const syn in sync) {
+                    if(sync[syn]) anySync = true
+                }
+                if(!anySync){
+                    currentTime += timeInterval
+                }else{
+                    currentTime += timeInterval
+                    var DAT = new Date(currentTime)
+                    if(sync.year){
+                        DAT.setFullYear(new Date().getFullYear())
+                    }
+                    if(sync.month){
+                        DAT.setMonth(new Date().getMonth())
+                    }
+                    if(sync.day){
+                        DAT.setDate(new Date().getDate())
+                    }
+                    if(sync.hour){
+                        DAT.setHours(new Date().getHours())
+                    }
+                    if(sync.minute){
+                        DAT.setMinutes(new Date().getMinutes())
+                    }
+                    if(sync.second){
+                        DAT.setSeconds(new Date().getSeconds())
+                    }
+                    currentTime = DAT.getTime()
+                }
+                
+                //Updates the time displays every second
+                displayTimes()
+                
+                // if midnight, update the date picker
+                var DATE = new Date(currentTime)
+                if(DATE.getHours() == 0 && DATE.getMinutes() == 0 && DATE.getSeconds() == 0) {
+                    $("#date").val(`${DATE.getFullYear()}-${`${DATE.getMonth()+1}`.padStart(2,"0")}-${`${DATE.getDate()+1}`.padStart(2,"0")}`)
+                }
+
+                // Updates the simulation states if simulating
+                if(simulating) {
+                    await UpdateSimulation()
+                }
+                // If the step has changed, update the display.
+                if(step()!=lastStep){
+                    Update()
+                }
+            }
+            lastStep = step()
+        }, 1000);
+       
+        //The render cycle
+        function Update(){
+            if(room != null) {
+                var valid = validMessages()
+                $("#chatbox").empty()
+                // Renders the chat by the amount of messages allowed to be displayed from before the current timestamp
+                if(valid.length > amountToRender) {
+                    valid = valid.slice(valid.length - amountToRender)
+                }
+                console.log(valid.length);
+                valid.forEach(function(message){
+                    var name = message.nameOveride
+                    if(name == ""){
+                        if(getUserByID(message.authorID) != null){
+                            name = getUserByID(message.authorID).name
+                        }
+                    }
+                    $("#chatbox").append(`<li class="ms-3 me-3 msg">${Time(message.timestamp).string} | <span style="color:${message.nameColor};">${name}</span>${message.type == "MSG"?": ":""}<span style="color:${message.bodyColor};">${message.body}</span></li>`);
+                })
+                UpdateUsers()
+                $("#chatbox").scrollTop($("#chatbox")[0].scrollHeight);
+            }
+        }
+ 
+        // Updates the users list
+        function UpdateUsers(){
+            var arnd = around(currentTime, 15*(60 * 1000))
+            var usrs = arnd.map(m=>m.authorID)
+            // makes the user list unique
+            usrs = usrs.filter((v,i,a)=>a.indexOf(v)==i)
+            // gets the users from the list
+            var users = usrs.map(u=>getUserByID(u))
+            // renders the user list
+            $("#users").empty()
+            // filters nulls and users without names
+            users = users.filter(u=>u!=null && u.name!="")
+            users.forEach(function(user){
+                if(user != null){
+                    $("#users").append(`<li class="ms-3 me-3"><span style="color:${user.nameColor};">${user.name}</span></li>`);
+                }
+            })
+            if(users.length > 1) $("#usersH").text(`${users.length} Were There`);
+            else $("#usersH").text(`${users.length} Was Here`);
+        }
+
+        // Updates the simulation
+        async function UpdateSimulation(){
+            if(!generating){
+                if(nextGen != null){
+                    if(currentTime >= nextGen.nextMessageTimestamp-3){
+                        var user = getUserByID(nextGen.id)
+                        var Context = `${context()}\n${user.name}:`
+                        console.log(Context,user);
+                        await generate(Context,user,currentTime+3)
+                    }
+                }
+            }
+            if((simulationTimings == null)||(currentTime >= nextTime)){
+                UpdateSimStats()
+            }
+            simulationUpdatedAt = currentTime
+        }
+        
+        // Updates the simulation stats
+        function UpdateSimStats(){
+            var users = getCurrentUsers()
+            if(users.length > 0){
+                simulationTimings = getAverageResponseTimes(users,currentTime)
+                if(simulationTimings != undefined){
+                    nextTime = simulationTimings.nextResponses.sort((a,b)=>a.nextMessageTimestamp-b.nextMessageTimestamp)[0].nextMessageTimestamp
+                    nextGen = simulationTimings.nextResponses.sort((a,b)=>a.nextMessageTimestamp-b.nextMessageTimestamp)[0]
+                }
+            }
+        }
+        
+        async function generate(text,user,timestamp){
+            if(naiBearer == null){
+                console.log(naiBearer);
+                console.log("[NO TOKEN]");
+                return false
+            }else{
+                console.log("[Generating...]");
+                return new Promise(async function(resolve, reject){
+                    console.log("[Generating...]");
+                    var options = {
+                        headers: {
+                            "Authorization": `Bearer ${naiBearer}`
+                        }
+                    }
+                    if(generating) {
+                        return generating
+                    }else{
+
+                        // Trims content to under 1980 tokens
+                        while(tokenizer.encode(text).length > 1980){
+                            console.log("[Trimming...]");
+                            text = text.split("\n")
+                            text.pop()
+                            text = text.join("\n")
+                        }
+
+
+                        generating = true
+                        // Makes AJAX call to NAI server
+                        console.log("Requesting...");
+                        var request = $.ajax({
+                            url: "https://api.novelai.net/ai/generate",
+                            method: "POST",
+                            data: JSON.stringify({
+                                input: text,
+                                model: "6B-v3",
+                                parameters: {
+                                    "use_string": true,
+                                    "bad_words_ids": [
+                                        [
+                                            58
+                                        ],
+                                        [
+                                            60
+                                        ],
+                                        [
+                                            90
+                                        ],
+                                        [
+                                            92
+                                        ],
+                                        [
+                                            685
+                                        ],
+                                        [
+                                            1391
+                                        ],
+                                        [
+                                            1782
+                                        ],
+                                        [
+                                            2361
+                                        ],
+                                        [
+                                            3693
+                                        ],
+                                        [
+                                            4083
+                                        ],
+                                        [
+                                            4357
+                                        ],
+                                        [
+                                            4895
+                                        ],
+                                        [
+                                            5512
+                                        ],
+                                        [
+                                            5974
+                                        ],
+                                        [
+                                            7131
+                                        ],
+                                        [
+                                            8183
+                                        ],
+                                        [
+                                            8351
+                                        ],
+                                        [
+                                            8762
+                                        ],
+                                        [
+                                            8964
+                                        ],
+                                        [
+                                            8973
+                                        ],
+                                        [
+                                            9063
+                                        ],
+                                        [
+                                            11208
+                                        ],
+                                        [
+                                            11709
+                                        ],
+                                        [
+                                            11907
+                                        ],
+                                        [
+                                            11919
+                                        ],
+                                        [
+                                            12878
+                                        ],
+                                        [
+                                            12962
+                                        ],
+                                        [
+                                            13018
+                                        ],
+                                        [
+                                            13412
+                                        ],
+                                        [
+                                            14631
+                                        ],
+                                        [
+                                            14692
+                                        ],
+                                        [
+                                            14980
+                                        ],
+                                        [
+                                            15090
+                                        ],
+                                        [
+                                            15437
+                                        ],
+                                        [
+                                            16151
+                                        ],
+                                        [
+                                            16410
+                                        ],
+                                        [
+                                            16589
+                                        ],
+                                        [
+                                            17241
+                                        ],
+                                        [
+                                            17414
+                                        ],
+                                        [
+                                            17635
+                                        ],
+                                        [
+                                            17816
+                                        ],
+                                        [
+                                            17912
+                                        ],
+                                        [
+                                            18083
+                                        ],
+                                        [
+                                            18161
+                                        ],
+                                        [
+                                            18477
+                                        ],
+                                        [
+                                            19629
+                                        ],
+                                        [
+                                            19779
+                                        ],
+                                        [
+                                            19953
+                                        ],
+                                        [
+                                            20520
+                                        ],
+                                        [
+                                            20598
+                                        ],
+                                        [
+                                            20662
+                                        ],
+                                        [
+                                            20740
+                                        ],
+                                        [
+                                            21476
+                                        ],
+                                        [
+                                            21737
+                                        ],
+                                        [
+                                            22133
+                                        ],
+                                        [
+                                            22241
+                                        ],
+                                        [
+                                            22345
+                                        ],
+                                        [
+                                            22935
+                                        ],
+                                        [
+                                            23330
+                                        ],
+                                        [
+                                            23785
+                                        ],
+                                        [
+                                            23834
+                                        ],
+                                        [
+                                            23884
+                                        ],
+                                        [
+                                            25295
+                                        ],
+                                        [
+                                            25597
+                                        ],
+                                        [
+                                            25719
+                                        ],
+                                        [
+                                            25787
+                                        ],
+                                        [
+                                            25915
+                                        ],
+                                        [
+                                            26076
+                                        ],
+                                        [
+                                            26358
+                                        ],
+                                        [
+                                            26398
+                                        ],
+                                        [
+                                            26894
+                                        ],
+                                        [
+                                            26933
+                                        ],
+                                        [
+                                            27007
+                                        ],
+                                        [
+                                            27422
+                                        ],
+                                        [
+                                            28013
+                                        ],
+                                        [
+                                            29164
+                                        ],
+                                        [
+                                            29225
+                                        ],
+                                        [
+                                            29342
+                                        ],
+                                        [
+                                            29565
+                                        ],
+                                        [
+                                            29795
+                                        ],
+                                        [
+                                            30072
+                                        ],
+                                        [
+                                            30109
+                                        ],
+                                        [
+                                            30138
+                                        ],
+                                        [
+                                            30866
+                                        ],
+                                        [
+                                            31161
+                                        ],
+                                        [
+                                            31478
+                                        ],
+                                        [
+                                            32092
+                                        ],
+                                        [
+                                            32239
+                                        ],
+                                        [
+                                            32509
+                                        ],
+                                        [
+                                            33116
+                                        ],
+                                        [
+                                            33250
+                                        ],
+                                        [
+                                            33761
+                                        ],
+                                        [
+                                            34171
+                                        ],
+                                        [
+                                            34758
+                                        ],
+                                        [
+                                            34949
+                                        ],
+                                        [
+                                            35944
+                                        ],
+                                        [
+                                            36338
+                                        ],
+                                        [
+                                            36463
+                                        ],
+                                        [
+                                            36563
+                                        ],
+                                        [
+                                            36786
+                                        ],
+                                        [
+                                            36796
+                                        ],
+                                        [
+                                            36937
+                                        ],
+                                        [
+                                            37250
+                                        ],
+                                        [
+                                            37913
+                                        ],
+                                        [
+                                            37981
+                                        ],
+                                        [
+                                            38165
+                                        ],
+                                        [
+                                            38362
+                                        ],
+                                        [
+                                            38381
+                                        ],
+                                        [
+                                            38430
+                                        ],
+                                        [
+                                            38892
+                                        ],
+                                        [
+                                            39850
+                                        ],
+                                        [
+                                            39893
+                                        ],
+                                        [
+                                            41832
+                                        ],
+                                        [
+                                            41888
+                                        ],
+                                        [
+                                            42535
+                                        ],
+                                        [
+                                            42669
+                                        ],
+                                        [
+                                            42785
+                                        ],
+                                        [
+                                            42924
+                                        ],
+                                        [
+                                            43839
+                                        ],
+                                        [
+                                            44438
+                                        ],
+                                        [
+                                            44587
+                                        ],
+                                        [
+                                            44926
+                                        ],
+                                        [
+                                            45144
+                                        ],
+                                        [
+                                            45297
+                                        ],
+                                        [
+                                            46110
+                                        ],
+                                        [
+                                            46570
+                                        ],
+                                        [
+                                            46581
+                                        ],
+                                        [
+                                            46956
+                                        ],
+                                        [
+                                            47175
+                                        ],
+                                        [
+                                            47182
+                                        ],
+                                        [
+                                            47527
+                                        ],
+                                        [
+                                            47715
+                                        ],
+                                        [
+                                            48600
+                                        ],
+                                        [
+                                            48683
+                                        ],
+                                        [
+                                            48688
+                                        ],
+                                        [
+                                            48874
+                                        ],
+                                        [
+                                            48999
+                                        ],
+                                        [
+                                            49074
+                                        ],
+                                        [
+                                            49082
+                                        ],
+                                        [
+                                            49146
+                                        ],
+                                        [
+                                            49946
+                                        ],
+                                        [
+                                            10221
+                                        ],
+                                        [
+                                            4841
+                                        ],
+                                        [
+                                            1427
+                                        ],
+                                        [
+                                            2602,
+                                            834
+                                        ],
+                                        [
+                                            29343
+                                        ],
+                                        [
+                                            37405
+                                        ],
+                                        [
+                                            35780
+                                        ],
+                                        [
+                                            2602
+                                        ],
+                                        [
+                                            17202
+                                        ],
+                                        [
+                                            8162
+                                        ],
+                                        [
+                                            50256
+                                        ]
+                                    ],
+                                    "logit_bias_exp":[
+                                        {
+                                            "bias": 0.05,
+                                            "ensure_sequence_finish": false,
+                                            "generate_once": false,
+                                            "sequence": [
+                                                198
+                                            ]
+                                        }
+                                    ],
+                                    "prefix": "6B-v3:2ac8fe3ab736785d81cbf865fe3bbee11062453798130af5a0f418a523a86ea6:21920d1f18136ae877f8141006317139ca4ba8a7fbf05520843e06e62f557b5f",
+                                    "eos_token_id": 198,
+                                    "max_length": 300,
+                                    "min_length": 1,
+                                    "tail_free_sampling": 1,
+                                    "temperature": 0.9,
+                                    "top_k": 60,
+                                    "top_p": 0.65,
+                                    "repetition_penalty": 1.15,
+                                    "repetition_penalty_range": 512,
+                                    "repetition_penalty_slope": 5.77,
+                                }
+                            }),
+                            headers: {
+                                "Authorization": `Bearer ${naiBearer}`,
+                                "Content-Type": "application/json"
+                            }
+                        })
+                        request.done(async function(data){
+                            console.log(data);
+                            if(data.error){
+                                var Text = text.split("\n")
+                                Text.pop()
+                                console.log("Too long output");
+                                generating = false
+                                var res = await generate(Text.join("\n"),user,timestamp)
+                                resolve(res)
+                            }else{
+                                var str = data.output
+                                // str = str.replace(/\n/g, "")
+                                // str = str.replace(/\s*\n/g, "")
+                                if(str.length == 0){
+                                    console.log("No output");
+                                    generating = false
+                                    var res = await generate(text,user,timestamp)
+                                    resolve(res)
+                                }else{
+                                    console.log("Posting...");
+                                    var obj = {
+                                        nameOveride: user.name,
+                                        authorID: user.id,
+                                        nameColor:"#EEEEEE",
+                                        bodyColor:"#EEEEEE",
+                                        body: str,
+                                        timestamp,
+                                        type: "MSG"
+                                    }
+                                    room.messages.push(obj)
+                                    console.log(obj);
+                                    console.log("[Generated]");
+                                    generating = false
+                                    resolve(obj)
+                                    Update()
+                                    nextGen = null
+                                    simulationTimings = null
+                                    nextTime = null
+                                    UpdateSimStats()
+                                }
+                            }
+                        })
+                    }
+                })
+            }
+        }
+        // Get the chat history for a given date
+        datePicker.submit(function(e) {
+            e.preventDefault();
+            var date = $("#date").val();
+            var date = new Date(date);
+            var time = $("#time").val();
+            time = time.split(":");
+            var timeString = `${date.getFullYear()}-${date.getMonth() + 1}-${parseInt(date.getDate())+1} ${time[0]}:${time[1].split(" ")[0]}:00`;
+            date = Date.parse(timeString);
+            currentTime = date;
+            date = date.toString();
+            Update()
+        });
+        // Handles the file upload
+        $("#uploadForm").submit(async function(e) {
+            e.preventDefault();
+            var file = $("#file").prop("files")[0]
+            tokenizer = await import("https://deno.land/x/gpt_2_3_tokenizer@v0.0.1/mod.js");
+            // JSON.parses the file to a JSON object
+            var fr = new FileReader();
+            var data = {};
+            fr.onload = function() {
+                data = fr.result;
+                datePicker.show();
+                timeBar.show()
+                toggleButton.text("Show Advanced Controls")
+                $("#uploadForm").hide();
+                room = JSON.parse(data);
+                room.canon = JSON.parse(data);
+                startingTime = nextMessage().timestamp
+                currentTime = nextMessage().timestamp
+                nextTime = nextNextMessage().timestamp
+                // nextGen = {
+                //     id: nextNextMessage().authorID,
+                //     nextMessageTimestamp: nextNextMessage().timestamp,
+                // }
+                paused = false
+
+                $("#time-when-value").text(`${Time(nextMessage().timestamp).string}`);
+                // Sets date and time of the forms to the current time
+                $("#date").val(new Date(currentTime).toISOString().split("T")[0]);
+                console.log(new Date(currentTime).toISOString().split("T")[0]);
+                var hours = parseInt(Time(currentTime).string.slice(0, -3).split(":")[0])+12
+                $("#time").val(`${hours.toString()}${Time(currentTime).string.slice(2, -6)}`);
+
+                Update()
+            };
+            fr.readAsText(file);
+        });
+    </script>
+</body>
+</html>
