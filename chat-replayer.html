@@ -50928,190 +50928,170 @@
         <!-- 
             Form to get the history for a given, date and time, room id and amount of messages to be displayed
         -->
-        <div class="col-12 row mt-4 ms-auto me-auto">
-            <form id="datePicker" class="row">
-                <div class="form-group col-4">
-                    <input type="date" class="form-control" id="date" name="date" placeholder="01/01/2011">
-                </div>
-                <div class="form-group col-4">
-                    <input type="time" class="form-control" id="time" name="time" placeholder="00:00:00">
-                </div>
-                <div class="form-group col-2">
-                    <input type="number" class="form-control" id="amount" name="amount" placeholder="50" value="50">
-                </div>
-                <button type="submit" class="btn btn-primary col-2">Recollect</button>
-            </form>
-        </div>
-        <div class="col-12 mt-4 row ms-auto me-auto" id="chatbox-container">
-            <ul id="chatbox" class="col-10 row">
-
-            </ul>
-            <div class="col-2">
-                <h3 id="usersH" style="color:white"></h3>
-                <ul id="users" style="color:white;background-color: rgb(0, 0, 0);">
-    
-                </ul>
-            </div>
-        </div>
-        <div class="row col-12 mt-4 ms-auto me-auto" style="color:white">
-            <div class="col-4 row" id="time-bar">
-                <!--
-                    Time display for the chat -- How long until the next message
-                -->
-                <div id="time-display" class="row col-6" style="overflow: auto;">
-                    <div class="col-12">
-                        <h4 id="time-when" style="text-align: center;">Current Time</h4>
-                    </div>
-                    <div class="col-12">
-                        <h5 id="cal" style="text-align: center;"></h5>
-                    </div>
-                    <div class="col-12">
-                        <h6 id="current-time-value" style="text-align: center;">0</h6>
-                    </div>
-                    <div class="col-12">
-                        <h4 id="time-when" style="text-align: center;">Next Message</h4>
-                    </div>
-                    <div class="col-12">
-                        <h5 id="cal-next" style="text-align: center;"></h5>
-                    </div>
-                    <div class="col-12">
-                        <h6 id="time-when-value" style="text-align: center;">0</h6>
-                    </div>
-                    <div class="col-12">
-                        <h5 style="text-align: center;">From</h5>
-                    </div>
-                    <div class="col-12">
-                        <h6 id="from" style="text-align: center;">???</h6>
-                        <!--
-                            From user selector when simulating
-                        -->
-                        <select id="from-select" class="form-control">
-                        </select>
-                    </div>
+        <div class="col-10 mt-4 row ms-auto me-auto" id="chatbox-container">
+            <div id="roomStats" class="col-12 row container" style="color:white">
+                <div class="col-6">
+                    <h2 id="roomName"></h2>
+                    <p id="description"></p>
                 </div>
                 <div class="col-6">
-                    <!--
-                        Button to toggle the time controls and simulation bar
-                    -->
-                    <button id="toggle-controls" class="btn btn-primary">Hide</button>
-                    <div id="time-controls">
-                        <!--
-                            Time controls - Forward and Backward buttons
-                        -->
-                        <div class="row mt-2">
-                            <div class="col-12">
-                                <h5 id="skip-title" style="text-align: center;">Skip Controls</h3>
-                            </div>
-                            <div class="col-6">
-                                <button type="button" class="btn btn-primary" id="back-button">Back</button>
-                            </div>
-                            <div class="col-6">
-                                <button type="button" class="btn btn-primary" id="forward-button" style="float: right;">Forward</button>
+                    <h3 id="landmarksTitle">Landmarks</h2>
+                    <ul id="landmarks">
+                    </ul>
+                </div>
+            </div>
+            <div class="col-12">
+                <div id="topControls" class="col-12" style="border: 1px solid white;border-bottom: 0; width:100%;color: white;">
+                    <div class="row">
+                        <div class="col-3">
+                            <div class="input-group m-2">
+                                <button type="button" class="btn btn-secondary" id="back-button">Back</button>
+                                <button type="button" class="btn btn-primary" id="forward-button" style="float: right;border-top-right-radius: 5px;border-bottom-right-radius: 5px;">Forward</button>
+                                <select id="from-select" class="form-control">
+                                </select>
                             </div>
                         </div>
-                        <!--
-                            Time interval input(up/down integer selector) for the chat -- How many seconds pass per second
-                        -->
-                        <div class="row mt-2" style="overflow: auto;">
-                            <div class="col-12">
-                                <h5 style="text-align: center;">Time Interval</h3>
-                            </div>
-                            <div class="col-6 ms-auto me-auto">
-                                <form id="timeIntervalForm">
-                                    <input type="number" class="form-control" id="timeInterval" name="timeInterval" placeholder="1" min="1"step="1" value="1">
+                        <div class="col-6">
+                            <div class="row m-2 ms-auto me-auto" style="display:block">
+                                <form id="datePicker" class="row">
+                                    <div class="form-group col-4">
+                                        <input type="date" class="form-control" id="date" name="date" placeholder="01/01/2011">
+                                    </div>
+                                    <div class="form-group col-4">
+                                        <input type="time" class="form-control" id="time" name="time" placeholder="00:00:00">
+                                    </div>
+                                    <div class="form-group col-2">
+                                        <input type="number" class="form-control" id="amount" name="amount" placeholder="50" value="50">
+                                    </div>
+                                    <button type="submit" class="btn btn-primary col-2">Recollect</button>
                                 </form>
                             </div>
-                        </div>
-                        <!--
-                            Button to save the current room state to
-                        -->
-                        <div id="export-controls" class="row mt-2">
-                            <div class="col-12">
-                                <h5 style="text-align: center;">Export</h3>
-                            </div>
-                            <div class="col-6">
-                                <button type="button" class="btn btn-primary" id="save-button">Save</button>
+                            <div id="lengthDiv" class="input-group m-2">
+                                <input type="range" class="form-control" id="length-control" name="length-control" min="-1.5" max="1.5" step="0.01" value="0.00" style="color:white;background-color: rgb(24, 24, 24);">
+                                <label id="length-value" class="input-group-text" for="length-control" style="color:white;background-color: rgb(53, 53, 53);">0.00</label>
                             </div>
                         </div>
-                        <!--
-                            A slider for the lenght bias float
-                        -->
-                        <div id="length" class="row mt-2">
-                            <div class="col-12">
-                                <h5 style="text-align: center;">Length Bias</h3>
-                            </div>
-                            <div class="col-12">
-                                <input type="range" class="form-control" id="length-control" name="length-control" min="-2" max="2" step="0.01" value="0.05">
-                            </div>
-                            <div class="col-12">
-                                <h6 id="length-value" style="text-align: center;">0.05</h6>
-                            </div>
-                        </div>
-                        <!--
-                            The sync controls to toggle syncing individual parts of time with real time
-                        -->
-                        <div id="sync-controls">
-                            <div class="row mt-2">
-                                <div class="col-12">
-                                    <h5 style="text-align: center;">Sync Controls</h3>
-                                </div>
-                            </div>
-                            <div class="container">
-                                <div class="btn-group mt-2 ms-auto me-auto" role="group" aria-label="Sync Controls">
-                                    <button type="button" class="btn btn-primary" id="sync-years">Sync Years</button>
-                                    <button type="button" class="btn btn-primary" id="sync-months">Sync Months</button>
-                                    <button type="button" class="btn btn-primary" id="sync-days">Sync Days</button>
-                                </div>
-                                <div class="btn-group mt-2 ms-auto me-auto" role="group" aria-label="Sync Controls">
-                                    <button type="button" class="btn btn-primary" id="sync-hours">Sync Hours</button>
-                                    <button type="button" class="btn btn-primary" id="sync-minutes">Sync Minutes</button>
-                                    <button type="button" class="btn btn-primary" id="sync-seconds">Sync Seconds</button>
-                                </div>
+                        <div class="col-3">
+                            <div style="float: right; text-align:center" class="m-1 me-2">
+                                <!--<span id="time-when" style="text-align: center;">Current Time</span>
+                                <span> | </span>-->
+                                <span style="text-align: center;">
+                                    <span id="cal" style="text-align: center;"></span>
+                                    <br>
+                                    <span id="current-time-value" style="text-align: center;"></span>
+                                </span>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="container col-8 mt-4 ms-auto ms-auto" id="simulation-bar">
-                <!--
-                    Simulation Button
-                -->
-                <div class="row col-12" style="overflow: auto;">
-                    <button type="button" class="btn btn-primary" id="simulation-button">Start Simulation</button>
-                </div>
-            </div>
-            <div class="container col-8 mt-4 ms-auto ms-auto" id="token-bar">
-                <form id="tokenToken" class="row m-2">
-                    <div class="form-group col-10" style="color: white;">
-                        <input type="text" class="form-control" id="token" name="token" placeholder="NovelAI Bearer Token...">
+                <ul id="chatbox" class="col-12 row"></ul>
+                <div id="bottom-display" class="col-12" style="border: 1px solid white;border-top: 0; width:100%;color: white;">
+                    <div class="p-1 ps-2">
+                        <span><span id="from"></span> will respond <span id="cal-next"></span> at <span id="time-when-value"></span></span>
                     </div>
-                    <button type="submit" class="col-2 btn btn-primary">Assign Token</button>
+                </div>
+                <form id="chat-form" class="col-12">
+                    <div class="input-group" style="padding:0">
+                        <label class="input-group-text" for="nameSelect" style="border-top-left-radius: 0;border-top:0; border-top-right-radius:0;color:white;background-color: rgb(53, 53, 53);">User</label>
+                        <select class="form-select" id="nameSelect" name="name" style="border-top:0;width: 50px;color:white;background-color: rgb(0, 0, 0);">
+                        </select>
+
+                        <input type="text" class="form-control w-50" id="message" name="message" placeholder="Type a message..." style="color:white;background-color: rgb(0, 0, 0);border-top-right-radius:0;">
+                    </div>
                 </form>
             </div>
-            <div class="container col-8 mt-4 ms-auto ms-auto" id="control-bar">
-                <!--
-                    Chat input form for selecting name, color and message content, then a send button
-                -->
-                <div class="row col-12" style="overflow: auto;">
-                    <div class="col-12">
-                        <form id="chat-form" class="row">
-                            <div class="form-group col-1">
-                                <input type="color" class="form-control form-control-color" id="nameColor" name="nameColor" value="#ffffff" title="Choose your color">
+            <div class="row col-12 mt-4 ms-auto me-auto" style="color:white">
+                <div class="col-4 row" id="time-bar">
+                    <!--
+                        Time display for the chat -- How long until the next message
+                    -->
+                    <div class="col-6">
+                        <!--
+                            Button to toggle the time controls and simulation bar
+                        -->
+                        <button id="toggle-controls" class="btn btn-primary">Hide</button>
+                        <div id="time-controls">
+                            <!--
+                                Time interval input(up/down integer selector) for the chat -- How many seconds pass per second
+                            -->
+                            <div class="row mt-2" style="overflow: auto;">
+                                <div class="col-12">
+                                    <h5 style="text-align: center;">Time Interval</h3>
+                                </div>
+                                <div class="col-6 ms-auto me-auto">
+                                    <form id="timeIntervalForm">
+                                        <input type="number" class="form-control" id="timeInterval" name="timeInterval" placeholder="1" min="1"step="1" value="1">
+                                    </form>
+                                </div>
                             </div>
-                            <div class="form-group col-2">
-                                <input type="text" class="form-control" id="name" name="name" placeholder="Name">
+                            <!--
+                                Button to save the current room state to
+                            -->
+                            <div id="export-controls" class="row mt-2">
+                                <div class="col-12">
+                                    <h5 style="text-align: center;">Export</h3>
+                                </div>
+                                <div class="col-6">
+                                    <button type="button" class="btn btn-primary" id="save-button">Save</button>
+                                </div>
                             </div>
-                            <div class="form-group col-1">
-                                <input type="color" class="form-control form-control-color" id="bodyColor" name="bodyColor" value="#ffffff" title="Choose your color">
+                            <!--
+                                The sync controls to toggle syncing individual parts of time with real time
+                            -->
+                            <div id="sync-controls">
+                                <div class="row mt-2">
+                                    <div class="col-12">
+                                        <h5 style="text-align: center;">Sync Controls</h3>
+                                    </div>
+                                </div>
+                                <div class="container">
+                                    <div class="btn-group mt-2 ms-auto me-auto" role="group" aria-label="Sync Controls">
+                                        <button type="button" class="btn btn-primary" id="sync-years">Sync Years</button>
+                                        <button type="button" class="btn btn-primary" id="sync-months">Sync Months</button>
+                                        <button type="button" class="btn btn-primary" id="sync-days">Sync Days</button>
+                                    </div>
+                                    <div class="btn-group mt-2 ms-auto me-auto" role="group" aria-label="Sync Controls">
+                                        <button type="button" class="btn btn-primary" id="sync-hours">Sync Hours</button>
+                                        <button type="button" class="btn btn-primary" id="sync-minutes">Sync Minutes</button>
+                                        <button type="button" class="btn btn-primary" id="sync-seconds">Sync Seconds</button>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="form-group col-6">
-                                <input type="text" class="form-control" id="message" name="message" placeholder="Message">
-                            </div>
-                            <button type="submit" class="btn btn-primary col-2">Send</button>
-                        </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="container col-8 mt-4 ms-auto ms-auto" id="simulation-bar">
+                    <!--
+                        Simulation Button
+                    -->
+                    <div class="row col-12" style="overflow: auto;">
+                        <button type="button" class="btn btn-primary" id="simulation-button">Start Simulation</button>
+                    </div>
+                </div>
+                <div class="container col-8 mt-4 ms-auto ms-auto" id="token-bar">
+                    <form id="tokenToken" class="row m-2">
+                        <div class="form-group col-10" style="color: white;">
+                            <input type="text" class="form-control" id="token" name="token" placeholder="NovelAI Bearer Token...">
+                        </div>
+                        <button type="submit" class="col-2 btn btn-primary">Assign Token</button>
+                    </form>
+                </div>
+                <div class="container col-8 mt-4 ms-auto ms-auto" id="control-bar">
+                    <!--
+                        Chat input form for selecting name, color and message content, then a send button
+                    -->
+                    <div class="row col-12" style="overflow: auto;">
+                        <div class="col-12">
+                        </div>
                     </div>
                 </div>
             </div>
+        </div>
+        <div class="col-2 mt-4 ms-auto me-auto">
+            <h3 id="usersH" style="color:white"></h3>
+            <ul id="users" style="color:white;background-color: rgb(19, 19, 19);">
+
+            </ul>
         </div>
     </div>
     <style>
@@ -51119,11 +51099,25 @@
             list-style-type: none;
             margin: 0;
             padding: 0;
-            height: 60vh;
+            height: 50vh;
             display: flex;
             flex-flow: column;
-            max-width: 90%;
             overflow:auto;
+            border: 1px solid #fff;
+        }
+        #chatbox li:nth-child(even){
+            background-color: #121212;
+        }
+        #landmarks{
+            max-height: 100px;
+            display: flex;
+            flex-flow:column;
+            overflow: auto;
+        }
+        #landmarks li{
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
         }
         .msg {
             padding: 10px;
@@ -51133,8 +51127,23 @@
         .msg:first-child {
             margin-top: auto;
         }
+        .msg:last-child {
+            border-bottom: 0;
+        }
         #users{
             list-style-type: none;
+            margin: 0;
+            padding: 0;
+        }
+        #chatInput{
+            background-color: #121212;
+            color: white;
+            border-top: 0;
+            border-top-left-radius: 0;
+            border-top-right-radius: 0;
+            margin: 0;
+        }
+        #chatBar{
             margin: 0;
             padding: 0;
         }
@@ -51155,6 +51164,7 @@
         var amountToRender = $("#amount").val()
         var tokenizer = null
         var naiBearer = null
+        var experimental = false
         var sync = {
             years: false,
             months: false,
@@ -51163,19 +51173,8 @@
             minutes: false,
             seconds: false
         }
-        var lengthBias = 0.05
-
-        function updateGen(gen){
-            if(!gen){
-                if(nextGen != null) lastGen = nextGen
-                nextGen = null
-                simulationTimings = null
-                nextTime = null
-            }else{
-
-            }
-
-        }
+        var lengthBias = 0.00
+        var commonWords = ["the","of","to","and","a","in","is","it","you","that","he","was","for","on","are","with","as","I","his","they","be","at","one","have","this","from","or","had","by","not","word","but","what","some","we","can","out","other","were","all","there","when","up","use","your","how","said","an","each","she","which","do","their","time","if","will","way","about","many","then","them","write","would","like","so","these","her","long","make","thing","see","him","two","has","look","more","day","could","go","come","did","number","sound","no","most","people","my","over","know","water","than","call","first","who","may","down","side","been","now","find","any","new","work","part","take","get","place","made","live","where","after","back","little","only","round","man","year","came","show","every","good","me","give","our","under","name","very","through","just","form","sentence","great","think","say","help","low","line","differ","turn","cause","much","mean","before","move","right","boy","old","too","same","tell","does","set","three","want","air","well","also","play","small","end","put","home","read","hand","port","large","spell","add","even","land","here","must","big","high","such","follow","act","why","ask","men","change","went","light","kind","off","need","house","picture","try","us","again","animal","point","mother","world","near","build","self","earth","father","head","stand","own","page","should","country","found","answer","school","grow","study","still","learn","plant","cover","food","sun","four","between","state","keep","eye","never","last","let","thought","city","tree","cross","farm","hard","start","might","story","saw","far","sea","draw","left","late","run","don't","while","press","close","night","real","life","few","north","open","seem","together","next","white","children","begin","got","walk","example","ease","paper","group","always","music","those","both","mark","often","letter","until","mile","river","car","feet","care","second","book","carry","took","science","eat","room","friend","began","idea","fish","mountain","stop","once","base","hear","horse","cut","sure","watch","color","face","wood","main","enough","plain","girl","usual","young","ready","above","ever","red","list","though","feel","talk","bird","soon","body","dog","family","direct","pose","leave","song","measure","door","product","black","short","numeral","class","wind","question","happen","complete","ship","area","half","rock","order","fire","south","problem","piece","told","knew","pass","since","top","whole","king","space","heard","best","hour","better","true","during","hundred","five","remember","step","early","hold","west","ground","interest","reach","fast","verb","sing","listen","six","table","travel","less","morning","ten","simple","several","vowel","toward","war","lay","against","pattern","slow","center","love","person","money","serve","appear","road","map","rain","rule","govern","pull","cold","notice","voice","unit","power","town","fine","certain","fly","fall","lead","cry","dark","machine","note","wait","plan","figure","star","box","noun","field","rest","correct","able","pound","done","beauty","drive","stood","contain","front","teach","week","final","gave","green","oh","quick","develop","ocean","warm","free","minute","strong","special","mind","behind","clear","tail","produce","fact","street","inch","multiply","nothing","course","stay","wheel","full","force","blue","object","decide","surface","deep","moon","island","foot","system","busy","test","record","boat","common","gold","possible","plane","stead","dry","wonder","laugh","thousand","ago","ran","check","game","shape","equate","hot","miss","brought","heat","snow","tire","bring","yes","distant","fill","east","paint","language","among","grand","ball","yet","wave","drop","heart","am","present","heavy","dance","engine","position","arm","wide","sail","material","size","vary","settle","speak","weight","general","ice","matter","circle","pair","include","divide","syllable","felt","perhaps","pick","sudden","count","square","reason","length","represent","art","subject","region","energy","hunt","probable","bed","brother","egg","ride","cell","believe","fraction","forest","sit","race","window","store","summer","train","sleep","prove","lone","leg","exercise","wall","catch","mount","wish","sky","board","joy","winter","sat","written","wild","instrument","kept","glass","grass","cow","job","edge","sign","visit","past","soft","fun","bright","gas","weather","month","million","bear","finish","happy","hope","flower","clothe","strange","gone","jump","baby","eight","village","meet","root","buy","raise","solve","metal","whether","push","seven","paragraph","third","shall","held","hair","describe","cook","floor","either","result","burn","hill","safe","cat","century","consider","type","law","bit","coast","copy","phrase","silent","tall","sand","soil","roll","temperature","finger","industry","value","fight","lie","beat","excite","natural","view","sense","ear","else","quite","broke","case","middle","kill","son","lake","moment","scale","loud","spring","observe","child","straight","consonant","nation","dictionary","milk","speed","method","organ","pay","age","section","dress","cloud","surprise","quiet","stone","tiny","climb","cool","design","poor","lot","experiment","bottom","key","iron","single","stick","flat","twenty","skin","smile","crease","hole","trade","melody","trip","office","receive","row","mouth","exact","symbol","die","least","trouble","shout","except","wrote","seed","tone","join","suggest","clean","break","lady","yard","rise","bad","blow","oil","blood","touch","grew","cent","mix","team","wire","cost","lost","brown","wear","garden","equal","sent","choose","fell","fit","flow","fair","bank","collect","save","control","decimal","gentle","woman","captain","practice","separate","difficult","doctor","please","protect","noon","whose","locate","ring","character","insect","caught","period","indicate","radio","spoke","atom","human","history","effect","electric","expect","crop","modern","element","hit","student","corner","party","supply","bone","rail","imagine","provide","agree","thus","capital","won't","chair","danger","fruit","rich","thick","soldier","process","operate","guess","necessary","sharp","wing","create","neighbor","wash","bat","rather","crowd","corn","compare","poem","string","bell","depend","meat","rub","tube","famous","dollar","stream","fear","sight","thin","triangle","planet","hurry","chief","colony","clock","mine","tie","enter","major","fresh","search","send","yellow","gun","allow","print","dead","spot","desert","suit","current","lift","rose","continue","block","chart","hat","sell","success","company","subtract","event","particular","deal","swim","term","opposite","wife","shoe","shoulder","spread","arrange","camp","invent","cotton","born","determine","quart","nine","truck","noise","level","chance","gather","shop","stretch","throw","shine","property","column","molecule","select","wrong","gray","repeat","require","broad","prepare","salt","nose","plural","anger","claim","continent","oxygen","sugar","death","pretty","skill","women","season","solution","magnet","silver","thank","branch","match","suffix","especially","fig","afraid","huge","sister","steel","discuss","forward","similar","guide","experience","score","apple","bought","led","pitch","coat","mass","card","band","rope","slip","win","dream","evening","condition","feed","tool","total","basic","smell","valley","nor","double","seat","arrive","master","track","parent","shore","division","sheet","substance","favor","connect","post","spend","chord","fat","glad","original","share","station","dad","bread","charge","proper","bar","offer","segment","slave","duck","instant","market","degree","populate","chick","dear","enemy","reply","drink","occur","support","speech","nature","range","steam","motion","path","liquid","log","meant","quotient","teeth","shell","neck"]
 
         function validMessages(){
             if(room != null){
@@ -51189,7 +51188,12 @@
         }
         function validCanonMessages(){
             if(room != null){
-                var valid = room.canon.messages.filter(function(message){
+                var messages = room.cannon.messages
+                messages = messages.concat(room.messages)
+                messages = messages.sort(function(a,b){
+                    return a.timestamp - b.timestamp
+                })
+                var valid = messages.filter(function(message){
                     return message.timestamp <= currentTime
                 })
                 return valid
@@ -51278,6 +51282,10 @@
         function around(time, distance){
             if(room != null){
                 var messages = room.canon.messages
+                messages = messages.concat(room.messages)
+                messages = messages.sort(function(a,b){
+                    return a.timestamp - b.timestamp
+                })
                 var valid = messages.filter(function(message){
                     return message.timestamp <= time + distance && message.timestamp >= time - distance
                 })
@@ -51289,6 +51297,10 @@
         function getMessageByID(id){
             if(room != null) {
                 var messages = room.messages
+                messages = messages.concat(room.canon.messages)
+                messages = messages.sort(function(a,b){
+                    return a.timestamp - b.timestamp
+                })
                 return messages.find(function(message){
                     return message.id == id
                 })
@@ -51376,7 +51388,7 @@
                 return null
             }
         }
-        
+
         //Removes msg element by id
         function removeMsg(id){
             $(`#${id}`).remove()
@@ -51411,13 +51423,16 @@
         var timeControls = $("#time-controls")
         var syncControls = $("#sync-controls")
         var exportControls = $("#export-controls")
+        var topControls = $("#topControls")
 
         var simulationBar = $("#simulation-bar")
         var controlBar = $("#control-bar")
         var timeBar = $("#time-bar")
         var tokenBar = $("#token-bar")
+        var chatBar = $("#chatBar")
         
         var timeDisplay = $("#time-display")
+        var bottomDisplay = $("#bottom-display")
 
         var simulationButton = $("#simulation-button")
         var backButton = $("#back-button")
@@ -51431,14 +51446,21 @@
         var syncSecondButton = $("#sync-seconds")
         var saveButton = $("#save-button")
 
-        var skipTitle = $("#skip-title")
-
         var from = $("#from")
         var fromSelect = $("#from-select")
 
         var length = $("#length")
         var lengthValue = $("#length-value")
         var lengthControl = $("#length-control")
+        var lengthDiv = $("#lengthDiv")
+        var lengthLabel = $("#lengthLabel")
+
+        var roomName = $("#roomName")
+        var description = $("#description")
+        var landmarks = $("#landmarks")
+        var landmarksTitle = $("#landmarksTitle")
+
+        var chatbox = $("#chatbox")
 
         datePicker.hide()
         simulationBar.hide()
@@ -51448,6 +51470,19 @@
         tokenBar.hide()
         fromSelect.hide()
         length.hide()
+        roomName.hide()
+        description.hide()
+        landmarks.hide()
+        landmarksTitle.hide()
+        chatbox.hide()
+        topControls.hide()
+        chatForm.hide()
+        lengthControl.hide()
+        lengthValue.hide()
+        lengthDiv.hide()
+        lengthLabel.hide()
+        bottomDisplay.hide()
+        exportControls.hide()
 
         simulationButton.click(async function(){
             simulationBar.hide()
@@ -51455,9 +51490,15 @@
             controlBar.show()
             syncControls.hide()
             tokenBar.hide()
-            from.hide()
             fromSelect.show()
             length.show()
+            chatForm.show()
+            lengthControl.show()
+            lengthValue.show()
+            lengthDiv.show()
+            lengthLabel.show()
+            exportControls.show()
+            console.log(lengthDiv.addClass("m-2"));
             simulating = true
             $("#amount").val(50)
             // Trims out the future messages as the future is now changing.
@@ -51466,7 +51507,6 @@
             room.messages = room.messages.filter(function(message){
                 return message.timestamp <= currentTime
             })
-            skipTitle.text("Controls")
             backButton.text("Undo")
             forwardButton.text("Generate...")
             Update()
@@ -51487,6 +51527,7 @@
                 simulationTimings = null
                 nextTime = null
                 UpdateSimulation()
+                UpdateSimStats()
             }
         })
 
@@ -51506,9 +51547,7 @@
             if(timeControls.is(":visible")){
                 timeControls.hide()
                 if(naiBearer != null) {
-                    if(simulating){
-                        chatForm.hide()
-                    }else{
+                    if(!simulating){
                         simulationBar.hide()
                     }
                 }
@@ -51517,9 +51556,7 @@
             }else{
                 timeControls.show()
                 if(naiBearer != null) {
-                    if(simulating){
-                        chatForm.show()
-                    }else{
+                    if(!simulating){
                         simulationBar.show()
                     }
                 }
@@ -51541,6 +51578,7 @@
             if(nextGen){
                 if(nextGen.id){
                     nextGen.id = $(this).val()
+                    from.text($(this).children("option").filter(":selected").text())
                 }
             }
         })
@@ -51548,7 +51586,10 @@
             lengthValue.text($(this).val())
             lengthBias = parseFloat($(this).val())
         })
-
+        lengthControl.bind("input", function() {
+            lengthValue.text($(this).val())
+            lengthBias = parseFloat($(this).val())
+        });
         syncYearButton.click(function(){
             if(sync.year){
                 sync.year = false
@@ -51560,10 +51601,11 @@
             var DATE = new Date(currentTime)
             var newString = `${DATE.getFullYear()}-${`${DATE.getMonth()+1}`.padStart(2,"0")}-${`${DATE.getDate()}`.padStart(2,"0")}`
             $("#date").val(newString)
+            Update()
         })
         syncMonthButton.click(function(){
             if(sync.month){
-                sync.month
+                sync.month = false
                 syncMonthButton.text("Sync Months")
             }else{
                 sync.month = true
@@ -51572,6 +51614,7 @@
             var DATE = new Date(currentTime)
             var newString = `${DATE.getFullYear()}-${`${DATE.getMonth()+1}`.padStart(2,"0")}-${`${DATE.getDate()}`.padStart(2,"0")}`
             $("#date").val(newString)
+            Update()
         })
         syncDayButton.click(function(){
             if(sync.day){
@@ -51584,6 +51627,7 @@
             var DATE = new Date(currentTime)
             var newString = `${DATE.getFullYear()}-${`${DATE.getMonth()+1}`.padStart(2,"0")}-${`${DATE.getDate()}`.padStart(2,"0")}`
             $("#date").val(newString)
+            Update()
         })
         syncHourButton.click(function(){
             if(sync.hour){
@@ -51596,6 +51640,7 @@
             var DATE = new Date(currentTime)
             var newString = `${DATE.getFullYear()}-${`${DATE.getMonth()+1}`.padStart(2,"0")}-${`${DATE.getDate()}`.padStart(2,"0")}`
             $("#date").val(newString)
+            Update()
         })
         syncMinuteButton.click(function(){
             if(sync.minute){
@@ -51608,6 +51653,7 @@
             var DATE = new Date(currentTime)
             var newString = `${DATE.getFullYear()}-${`${DATE.getMonth()+1}`.padStart(2,"0")}-${`${DATE.getDate()}`.padStart(2,"0")}`
             $("#date").val(newString)
+            Update()
         })
         syncSecondButton.click(function(){
             if(sync.second){
@@ -51620,6 +51666,7 @@
             var DATE = new Date(currentTime)
             var newString = `${DATE.getFullYear()}-${`${DATE.getMonth()+1}`.padStart(2,"0")}-${`${DATE.getDate()}`.padStart(2,"0")}`
             $("#date").val(newString)
+            Update()
         })
 
         function displayTimes(){
@@ -51635,7 +51682,14 @@
                 if(nextTime != null){
                     $("#time-when-value").text(`${Time(nextTime).string}`);
                 }else{
-                    $("#time-when-value").text("???");
+                    if(simulating){
+                        while(nextTime == null){
+                            UpdateSimStats()
+                        }
+                            $("#time-when-value").text(`${Time(nextTime).string}`);
+                    }else{
+                        $("#time-when-value").text("???");
+                    }
                 }
             }
             var DATE = new Date(currentTime)
@@ -51655,13 +51709,12 @@
                 }
             }
             if(!simulating) from.text(getUserByID(fromSelect.val()).name)
-            else if(nextGen != null) fromSelect.val(nextGen.id)
         }
 
         // User Input
         chatForm.submit(function(e){
             e.preventDefault()
-            var name = $("#name").val()
+            var name = $("#nameSelect").val()
             var nameColor = $("#nameColor").val()
             var bodyColor = $("#bodyColor").val()
             var message = $("#message").val()
@@ -51804,6 +51857,8 @@
             // renders the user list
             $("#users").empty()
             fromSelect.empty()
+            var nameSelect = $("#nameSelect")
+            nameSelect.empty
             // filters nulls and users without names
             users = users.filter(u=>u!=null && u.name!="")
             // sorts the users by name alphabetically
@@ -51816,6 +51871,7 @@
                 if(user != null){
                     $("#users").append(`<li class="ms-3 me-3"><span style="color:${user.nameColor};">${user.name}</span></li>`);
                     fromSelect.append(`<option value="${user.id}">${user.name}</option>`)
+                    nameSelect.append(`<option value="${user.name}">${user.name}</option>`)
                 }
             })
             if(users.length > 1) $("#usersH").text(`${users.length} Were There`);
@@ -51830,12 +51886,12 @@
                         var fromValue = fromSelect.val()
                         if(fromValue != nextGen.id){
                             var user = getUserByID(fromValue)
-                            var Context = `${context()}\n${user.name}:`
+                            var Context = `${context()}${user.name}:`
                             console.log(Context,user);
                             await generate(Context,user,currentTime+3)
                         }else{
                             var user = getUserByID(nextGen.id)
-                            var Context = `${context()}\n${user.name}:`
+                            var Context = `${context()}${user.name}:`
                             console.log(Context,user);
                             await generate(Context,user,currentTime+3)
                         }
@@ -51856,6 +51912,8 @@
                 if(simulationTimings != undefined){
                     nextTime = simulationTimings.nextResponses.sort((a,b)=>a.nextMessageTimestamp-b.nextMessageTimestamp)[0].nextMessageTimestamp
                     nextGen = simulationTimings.nextResponses.sort((a,b)=>a.nextMessageTimestamp-b.nextMessageTimestamp)[0]
+                    fromSelect.val(nextGen.id)
+                    from.text(nextGen.name)
                 }
             }
         }
@@ -51877,7 +51935,7 @@
                     if(generating) {
                         return generating
                     }else{
-
+                        text = text.replace("&quot;","\"")
                         // Trims content to under 1967 tokens(leaves 24 for the modules which I believe is how many it needs? might be wrong?)
                         while(gpt3encoder.encode(text).length > 1976){
                             console.log("[Trimming...]");
@@ -51899,7 +51957,9 @@
                                     [58],
                                     [60],
                                     [90],
+                                    [91],
                                     [92],
+                                    [93],
                                     [685],
                                     [1391],
                                     [1782],
@@ -52073,60 +52133,100 @@
                                 "repetition_penalty_slope": 5.77,
                             }
                         }
-                        console.log(OBJ)
-                        var request = $.ajax({
-                            url: "https://api.novelai.net/ai/generate",
-                            method: "POST",
-                            data: JSON.stringify(OBJ),
-                            headers: {
-                                "Authorization": `Bearer ${naiBearer}`,
-                                "Content-Type": "application/json"
-                            }
-                        })
-                        request.done(async function(data){
-                            console.log(data);
-                            if(data.error){
-                                var Text = text.split("\n")
-                                Text.pop()
-                                console.log("Too long output");
-                                generating = false
-                                var res = await generate(Text.join("\n"),user,timestamp)
-                                resolve(res)
-                            }else{
-                                var str = data.output
-                                // str = str.replace(/\n/g, "")
-                                // str = str.replace(/\s*\n/g, "")
-                                if(str.length == 0){
-                                    console.log("No output");
-                                    generating = false
-                                    var res = await generate(text,user,timestamp)
-                                    resolve(res)
-                                }else{
-                                    console.log("Posting...");
-                                    var obj = {
-                                        id:uuidv4(),
-                                        nameOveride: user.name,
-                                        authorID: user.id,
-                                        nameColor:"#EEEEEE",
-                                        bodyColor:"#EEEEEE",
-                                        body: str,
-                                        timestamp,
-                                        type: "MSG"
+                        if(text.length < 1) return null
+                        else{
+                            if(room){
+                                if(experimental){
+                                    if(room.biases){
+                                        var bias = room.biases.find(bias => bias.user == nextGen.id)
+                                        if (bias) {
+                                            console.log("[Bias found]")
+                                            bias.biases.forEach(b=>{
+                                                OBJ.parameters.logit_bias_exp.push(b)
+                                            })
+                                        }
+                                    }else{
+                                        console.log("[No biases found]");
+                                        console.log(room)
                                     }
-                                    room.messages.push(obj)
-                                    console.log(obj);
-                                    console.log("[Generated]");
-                                    generating = false
-                                    resolve(obj)
-                                    Update()
-                                    if(nextGen != null) lastGen = nextGen
-                                    nextGen = null
-                                    simulationTimings = null
-                                    nextTime = null
-                                    UpdateSimStats()
                                 }
+                                var names = room.users.map(user => user != null?user.name:null)
+                                var banned = names.map(name=>`${name}:`)
+                                banned = banned.concat(names.map(name=>`${name}: `))
+                                banned = banned.map(bab=>gpt3encoder.encode(bab))
+                                console.log(banned);
+                                banned.forEach(ban=>{
+                                    OBJ.parameters.bad_words_ids.push(ban)
+                                })
+                                console.log(OBJ)
+                                var request = $.ajax({
+                                    url: "https://api.novelai.net/ai/generate",
+                                    method: "POST",
+                                    data: JSON.stringify(OBJ),
+                                    headers: {
+                                        "Authorization": `Bearer ${naiBearer}`,
+                                        "Content-Type": "application/json"
+                                    }
+                                })
+                                request.done(async function(data){
+                                    console.log(data);
+                                    if(data.error){
+                                        var Text = text.split("\n")
+                                        Text.pop()
+                                        console.error(data.error)
+                                        if(data.error == "list index out of range"){
+                                            console.log(OBJ);
+                                            reject("list index out of range")
+                                        }else{
+                                            generating = false
+                                            var res = await generate(Text.join("\n"),user,timestamp)
+                                            resolve(res)
+                                        }
+                                    }else{
+                                        var str = data.output
+                                        // str = str.replace(/\n/g, "")
+                                        // str = str.replace(/\s*\n/g, "")
+                                        if(str.length == 0){
+                                            console.log("No output");
+                                            generating = false
+                                            var res = await generate(text,user,timestamp)
+                                            resolve(res)
+                                        }else{
+                                            console.log("Posting...");
+                                            var obj = {
+                                                id:uuidv4(),
+                                                nameOveride: user.name,
+                                                authorID: user.id,
+                                                nameColor:"#EEEEEE",
+                                                bodyColor:"#EEEEEE",
+                                                body: str,
+                                                timestamp,
+                                                type: "MSG"
+                                            }
+                                            room.messages.push(obj)
+                                            var userIndex = room.users.findIndex(user=>user.id == nextGen.id)
+                                            console.log(room.users[userIndex]);
+                                            room.users[userIndex].messages.push({
+                                                id:obj.id,
+                                                timestamp,
+                                            })
+                                            console.log(obj);
+                                            console.log("[Generated]");
+                                            generating = false
+                                            resolve(obj)
+                                            Update()
+                                            if(nextGen != null) lastGen = nextGen
+                                            nextGen = null
+                                            simulationTimings = null
+                                            nextTime = null
+                                            UpdateSimStats()
+                                        }
+                                    }
+                                })
+                            }else{
+                                console.log("[No room found]")
                             }
-                        })
+                        }
                     }
                 })
             }
@@ -52156,10 +52256,27 @@
                 data = fr.result;
                 datePicker.show();
                 timeBar.show()
+                roomName.show()
+                description.show()
+                landmarks.show()
+                landmarksTitle.show()
+                chatbox.show()
+                topControls.show()
+                bottomDisplay.show()
                 toggleButton.text("Show Advanced Controls")
                 $("#uploadForm").hide();
                 room = JSON.parse(data);
-                if(!room.canon) room.canon = JSON.parse(data);
+                if(!room.canon) {
+                    console.log("[Canonizing...]");
+                    room.canon = JSON.parse(data);
+                }
+                
+                roomName.text(room.name)
+                description.text(room.description)
+                room.landmarks.forEach(landmark=>{
+                    landmarks.append(`<li>${landmark}</li>`)
+                })
+
                 startingTime = nextMessage().timestamp
                 currentTime = nextMessage().timestamp
                 nextTime = nextNextMessage().timestamp
