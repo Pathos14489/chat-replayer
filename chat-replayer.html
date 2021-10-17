@@ -50993,10 +50993,13 @@
                 <form id="chat-form" class="col-12">
                     <div class="input-group" style="padding:0">
                         <label class="input-group-text" for="nameSelect" style="border-top-left-radius: 0;border-top:0; border-top-right-radius:0;color:white;background-color: rgb(53, 53, 53);">User</label>
-                        <select class="form-select" id="nameSelect" name="name" style="border-top:0;width: 50px;color:white;background-color: rgb(0, 0, 0);">
-                        </select>
-
+                        <input type="text" class="form-control" id="nameSelect" name="name" placeholder="Username" style="color:white;background-color: rgb(0, 0, 0);border-top-right-radius:0;">
                         <input type="text" class="form-control w-50" id="message" name="message" placeholder="Type a message..." style="color:white;background-color: rgb(0, 0, 0);border-top-right-radius:0;">
+                        <input type="submit" style="display:none"> <!--For some reason this tricks it into being a submittable form again??-->
+                        <!--
+                        <select class="form-select" id="nameSelect" name="name" style="border-top:0;width: 50px;color:white;background-color: rgb(0, 0, 0);display: none;">
+                        </select>
+                        -->
                     </div>
                 </form>
             </div>
@@ -51529,6 +51532,7 @@
                 UpdateSimulation()
                 UpdateSimStats()
             }
+            Update()
         })
 
         forwardButton.click(function(){
@@ -51541,6 +51545,7 @@
                     currentTime = nextMessage().timestamp-1000
                 }
             }
+            if(!simulating) Update()
         })
 
         toggleButton.click(function(){
@@ -51715,15 +51720,15 @@
         chatForm.submit(function(e){
             e.preventDefault()
             var name = $("#nameSelect").val()
-            var nameColor = $("#nameColor").val()
-            var bodyColor = $("#bodyColor").val()
+            // var nameColor = $("#nameColor").val()
+            // var bodyColor = $("#bodyColor").val()
             var message = $("#message").val()
-            if(name != "" && nameColor != "" && message != "") {
+            if(name != "" && message != "") {
                 room.messages.push({
                     nameOveride: name,
                     authorID: 000,
-                    nameColor,
-                    bodyColor,
+                    nameColor:"",
+                    bodyColor:"",
                     body: message,
                     timestamp: currentTime,
                     type: "MSG"
@@ -52153,6 +52158,8 @@
                                 var names = room.users.map(user => user != null?user.name:null)
                                 var banned = names.map(name=>`${name}:`)
                                 banned = banned.concat(names.map(name=>`${name}: `))
+                                banned = banned.concat(names.map(name=>`${name}:(`))
+                                banned = banned.concat(names.map(name=>`${name}: (`))
                                 banned = banned.map(bab=>gpt3encoder.encode(bab))
                                 console.log(banned);
                                 banned.forEach(ban=>{
