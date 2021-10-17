@@ -11,4 +11,9 @@ Just download the html file, and open in your browser. If you just wanna browse 
 
 I've tried a sort of automatic bias encoding, but it's not exactly what I'd call great. It was an interesting experiment and I might fool around with it more later. I think having the biases be dated and based on 6-month periods instead of the entire history might be more accurate, but I digress. If you wanna try it out, just toggle the experimental variable to true in the main script. Some Users are a little crazy with it enabled though, you've been warned.
 
+# AI Users
+
+If you supply a NAI Bearer Token, it'll start generating for the other users using their API. The AI users are pretty good in my opinion, but there's a lot of room for improvement. The users currently operate on a similar schedule to what they actually did when they originally chatted on the server. If you're having a conversation with one though, it won't leave. And uh, if you leave one by themselves, I don't think they can leave either 'cause they'll keep themselves busy indefinitely as they lose their grip on sanity and delve into a pit of confusing self conversations.
+
 Also I've temporarily removed the other rooms because I have to update them.
+
