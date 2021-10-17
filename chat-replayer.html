@@ -51688,10 +51688,28 @@
                     $("#time-when-value").text(`${Time(nextTime).string}`);
                 }else{
                     if(simulating){
-                        while(nextTime == null){
+                        var arnd = around(currentTime, 15*(60 * 1000))
+                        var usrs = arnd.map(m=>m.authorID)
+                        // makes the user list unique
+                        usrs = usrs.filter((v,i,a)=>a.indexOf(v)==i)
+                        // gets the users from the list
+                        var users = usrs.map(u=>getUserByID(u))
+                        // filters nulls and users without names
+                        users = users.filter(u=>u!=null && u.name!="")
+                        // sorts the users by name alphabetically
+                        users.sort(function(a,b){
+                            if(a.name < b.name) return -1
+                            if(a.name > b.name) return 1
+                            return 0
+                        })
+                        while(nextTime == null && users.length > 0){
                             UpdateSimStats()
                         }
+                        if(nextTime != null){
                             $("#time-when-value").text(`${Time(nextTime).string}`);
+                        }else{
+                            $("#time-when-value").text("???");
+                        }
                     }else{
                         $("#time-when-value").text("???");
                     }
@@ -51859,11 +51877,6 @@
             usrs = usrs.filter((v,i,a)=>a.indexOf(v)==i)
             // gets the users from the list
             var users = usrs.map(u=>getUserByID(u))
-            // renders the user list
-            $("#users").empty()
-            fromSelect.empty()
-            var nameSelect = $("#nameSelect")
-            nameSelect.empty
             // filters nulls and users without names
             users = users.filter(u=>u!=null && u.name!="")
             // sorts the users by name alphabetically
@@ -51872,6 +51885,11 @@
                 if(a.name > b.name) return 1
                 return 0
             })
+            // renders the user list
+            $("#users").empty()
+            fromSelect.empty()
+            var nameSelect = $("#nameSelect")
+            nameSelect.empty
             users.forEach(function(user){
                 if(user != null){
                     $("#users").append(`<li class="ms-3 me-3"><span style="color:${user.nameColor};">${user.name}</span></li>`);
